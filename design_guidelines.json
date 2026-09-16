@@ -1,0 +1,177 @@
+{
+  "app_name": "Arunika",
+  "personality": "3 Editorial Mobile LIGHT",
+  "personality_one_liner": "An authoritative, paper-precise financial accounting system designed with magazine-like clarity for village-owned enterprise (BUMKam) managers.",
+  "color": {
+    "surface": "#FAF8F5",
+    "onSurface": "#1C1B18",
+    "surfaceSecondary": "#F3EFEA",
+    "onSurfaceSecondary": "#2C2A26",
+    "surfaceTertiary": "#EAE5DC",
+    "onSurfaceTertiary": "#3C3833",
+    "surfaceInverse": "#1C1B18",
+    "onSurfaceInverse": "#FAF8F5",
+    "brand": "#3B5338",
+    "brandPrimary": "#3B5338",
+    "onBrandPrimary": "#FAF8F5",
+    "brandSecondary": "#8C6D46",
+    "onBrandSecondary": "#FAF8F5",
+    "brandTertiary": "#E4EADF",
+    "onBrandTertiary": "#233321",
+    "success": "#3B5338",
+    "onSuccess": "#FAF8F5",
+    "warning": "#A67C00",
+    "onWarning": "#FAF8F5",
+    "error": "#A63A2B",
+    "onError": "#FAF8F5",
+    "info": "#2B4C6F",
+    "onInfo": "#FAF8F5",
+    "border": "#E2DDD5",
+    "borderStrong": "#C8C0B3",
+    "divider": "#EFECE6",
+    "muted": "#756F64",
+    "onBrand": "#FAF8F5"
+  },
+  "typography": {
+    "displayFontFamily": "Playfair Display",
+    "textFontFamily": "DM Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous editorial vertical spacing with clean card separation and tabular data alignment.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": false,
+    "do's": [
+      "Use clean paper-like surfaces with hairline borders",
+      "Maintain high contrast for accounting figures"
+    ],
+    "dont's": [
+      "Avoid heavy blurs that reduce financial data scannability",
+      "Do not use dark or neon corporate SaaS styles"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Dashboard",
+      "purpose": "Overview of BUMKam financial health with key performance indicators and quick transaction feeds.",
+      "states": {
+        "loading": "Centered spinning indicator with subtle skeleton cards",
+        "empty": "Illustrated ledger icon with prompt to initialize opening balances",
+        "error": "Banner with readable error message and retry button"
+      },
+      "layout": "Scrollable vertical feed with sticky top header, multi-unit selector pill, 2-column KPI metric cards, cash flow summary chart, and recent transaction list items."
+    },
+    {
+      "name": "Sales (Penjualan)",
+      "purpose": "Manage customer accounts, sales invoices, cash/credit sales, and payment receipts.",
+      "states": {
+        "loading": "Skeleton list rows matching invoice structure",
+        "empty": "Empty invoice ledger illustration with 'Buat Faktur Baru' CTA",
+        "error": "Error retry card"
+      },
+      "layout": "Segmented control tabs (Semua, Belum Lunas, Lunas), search bar with filter chips, and list cards displaying invoice number, customer name, status pill, and Rp amount."
+    },
+    {
+      "name": "Purchases (Pembelian)",
+      "purpose": "Track suppliers, purchase orders, incoming bills, and supplier payments.",
+      "states": {
+        "loading": "Skeleton purchase rows",
+        "empty": "Empty purchase ledger illustration with 'Catat Pembelian' CTA",
+        "error": "Error retry card"
+      },
+      "layout": "Supplier debt overview cards followed by scrollable purchase bills list with aging badges and approval status."
+    },
+    {
+      "name": "Cash & Bank (Kas & Bank)",
+      "purpose": "Manage cash drawers, bank accounts, inter-account transfers, and operational disbursements.",
+      "states": {
+        "loading": "Skeleton account cards",
+        "empty": "Empty account state with 'Tambah Akun Kas/Bank' CTA",
+        "error": "Error retry card"
+      },
+      "layout": "Horizontal account summary cards (Kas Tunai, Rekening Desa BRI, etc.), quick action buttons (Transfer, Setor, Tarik), and chronological cash flow ledger."
+    },
+    {
+      "name": "Accounting Core (Akuntansi)",
+      "purpose": "Manage Chart of Accounts (COA), manual & automatic journal entries, General Ledger, and Trial Balance.",
+      "states": {
+        "loading": "Skeleton accounting table rows",
+        "empty": "No journal entries found state",
+        "error": "Error retry card"
+      },
+      "layout": "Tabbed sub-navigation (Bagan Akun, Jurnal Umum, Buku Besar, Neraca Saldo) with expandable hierarchical ledger rows and floating quick entry button."
+    },
+    {
+      "name": "Financial Reports (Laporan Keuangan)",
+      "purpose": "Generate Balance Sheet (Neraca), Income Statement (Laba Rugi), Cash Flow, and AR/AP Aging reports with CSV/Excel/PDF export.",
+      "states": {
+        "loading": "Report generation skeleton",
+        "empty": "Select period to generate report state",
+        "error": "Error retry card"
+      },
+      "layout": "Period picker header, report selector carousel (Laba Rugi, Posisi Keuangan, Arus Kas, Umur Piutang), structured financial statement tables, and sticky export action bar."
+    },
+    {
+      "name": "Business Units & Settings",
+      "purpose": "Manage BUMKam multi-unit enterprise units (Unit Simpan Pinjam, Unit Air Bersih, Unit Pasar Desa), Cost Centers, Users & Roles (RBAC), and Audit Trail.",
+      "states": {
+        "loading": "Skeleton settings rows",
+        "empty": "No business units configured",
+        "error": "Error retry card"
+      },
+      "layout": "Grouped list sections for Unit Usaha, Manajemen Pengguna (RBAC), Periode Akuntansi, and Jejak Audit (Audit Trail)."
+    }
+  ],
+  "images": {
+    "bumkam_logo": {
+      "url": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80",
+      "alt": "BUMKam accounting professional ledger"
+    },
+    "empty_ledger": {
+      "url": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=400&q=80",
+      "alt": "Blank ledger paper"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Build Arunika as a professional-grade BUMKam financial management app in Bahasa Indonesia.",
+    "Follow the Editorial Mobile LIGHT personality (Playfair Display for headings, DM Sans for body, warm paper-white surface #FAF8F5, forest green brand #3B5338, and ochre #8C6D46).",
+    "Ensure all data-dense tables and reports use tabular monospace formatting and clean hairline borders.",
+    "Implement fully working Indonesian forms for Sales, Purchases, Cash & Bank transfers, Journal Entries, and Financial Reports with CSV/Excel/PDF export simulation.",
+    "Ensure complete RBAC role switcher and multi-business-unit selector across screens."
+  ]
+}

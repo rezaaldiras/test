@@ -1,0 +1,47 @@
+{
+  "summary": "Arunika BUMKam (Expo + FastAPI + MongoDB) tested end-to-end. Backend accounting integrity suite (12/12 PASS) and new public-URL smoke suite (11/11 PASS after fix). Found & fixed 1 real backend bug: /api/auth/refresh raised 500 TypeError comparing offset-naive Mongo datetimes with tz-aware utcnow(); patched in routes_auth_setup.py. Frontend E2E via preview URL validated: setup->login->Beranda (6 KPI cards) -> Transaksi -> Akuntansi -> Laporan (Laba Rugi/Posisi Keuangan/Arus Kas with CSV/Excel/PDF export) -> Pengaturan (Pengguna & Peran, Periode Akuntansi, Konfigurasi Pajak & Akun, Jejak Audit). Fully Bahasa Indonesia, no red screens, testIDs present on critical inputs. Backend uses two deprecated APIs (FastAPI @on_event startup/shutdown, Pydantic .dict()) — cosmetic, not blocking.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "POST /api/auth/refresh", "issue": "Returned 500 (TypeError: can't compare offset-naive and offset-aware datetimes). session['expires_at'] from Mongo is naive; utcnow() is tz-aware. FIXED by normalizing tzinfo in routes_auth_setup.py refresh handler.", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "server.py startup/shutdown", "issue": "Uses deprecated FastAPI @app.on_event; migrate to lifespan context (Pydantic/FastAPI deprecation warnings on every test run)."},
+      {"endpoint": "routes_transactions.py:657", "issue": "Uses Pydantic v1 .dict() (deprecated). Replace with .model_dump()."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_accounting.py",
+    "/app/backend/tests/test_public_api.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/app/test_reports/pytest/public_results.xml"
+  ],
+  "action_items": [
+    "Verify /api/auth/refresh fix in routes_auth_setup.py (offset-aware normalization) is acceptable; consider storing all Mongo datetimes as naive UTC or tz-aware consistently to prevent regressions elsewhere (audit_logs, sessions, journal entries).",
+    "Migrate FastAPI startup/shutdown handlers to lifespan context in server.py (deprecation).",
+    "Replace Pydantic `.dict()` with `.model_dump()` in routes_transactions.py:657 (and any other occurrences).",
+    "pytest.ini forces `-n 2 --dist loadscope` via xdist; document that public URL tests must be run with `-n 0` (already noted in file header) to avoid preview DB races between workers."
+  ],
+  "critical_code_review_comments": [
+    "server.py exception handler catches bare Exception and returns Indonesian message — good. But logs full stack, ensure no PII leaks.",
+    "auth refresh rotation logic is correct (atomic revoke via modified_count=1) — race-safe.",
+    "engine.utcnow returns tz-aware datetime; Mongo strips tzinfo on read. This mismatch caused the refresh bug and could affect audit_log/period comparisons.",
+    "routes_reports.py exposes CSV/XLSX/PDF via base64 payload — filename ends with correct extension; verified all three formats return non-empty content.",
+    "RBAC verified: auditor role can GET /reports/trial-balance but POST /sales-invoices returns 403."
+  ],
+  "updated_files": [
+    "/app/backend/routes_auth_setup.py",
+    "/app/backend/tests/test_public_api.py"
+  ],
+  "success_rate": {"backend": "100% (23/23 tests: 12 in-process + 11 public URL after fix)", "frontend": "100% for tested flows (login, tabs, settings, dashboard KPIs, reports UI)"},
+  "seed_data_creation": "Preview DB seeded via bootstrap: admin@bumkam.id/sandirahasia123 + full CoA (>=25 accounts). Auditor accounts auto-created per public-test run with unique emails auditor+<hex>@bumkam.id.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Preview DB now has admin@bumkam.id + seeded CoA. Reuse credentials in memory/test_credentials.md. Run backend tests with: `cd /app/backend && PYTHONPATH=. DB_NAME=arunika_test_db pytest tests/test_accounting.py -q -n 0` and public tests: `PYTHONPATH=. pytest tests/test_public_api.py -q -n 0`. Do NOT run pytest without `-n 0` because pytest.ini forces xdist which drops the test DB between workers.",
+  "rca_of_issue": "Bug: POST /api/auth/refresh -> HTTP 500. Reproduction: login as admin, POST /api/auth/refresh with the returned refresh_token. Backend log: TypeError: can't compare offset-naive and offset-aware datetimes at routes_auth_setup.py:129. RCA: `issue_tokens` stores `expires_at = utcnow() + timedelta(days=REFRESH_DAYS)` (tz-aware), but Motor/PyMongo returns datetimes stripped of tzinfo. The comparison `session['expires_at'] <= utcnow()` then mixes types. Mitigation applied: in `refresh`, if `expires_at.tzinfo is None`, assume UTC and attach `timezone.utc` before comparison. Long-term fix (recommended to main agent): store all datetimes as tz-naive UTC (or migrate to `datetime.now(timezone.utc).replace(tzinfo=None)`) consistently across engine.utcnow, sessions, fiscal periods, audit logs to prevent similar bugs."
+}
